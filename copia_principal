@@ -1,0 +1,50 @@
+from tkinter import ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
+
+class Principal(ttk.Frame):
+
+    def __init__(self, parent, ctrl):
+        super().__init__(parent)
+
+        self.ctrl = ctrl
+
+        self.place(relx=0.18, y=0, relwidth=0.82, relheight=1)
+
+        self.fig = Figure(figsize=(14, 10), dpi=100)
+
+        self.ax1 = self.fig.add_subplot(311)
+        self.ax2 = self.fig.add_subplot(312)
+        self.ax3 = self.fig.add_subplot(313) #(Numero de linhas - colunas  - posicao)
+
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.canvas.get_tk_widget().pack(expand=True, fill="both")
+        ##self.canvas.draw()  
+
+    def plotar(self):
+        self.ax1.clear()
+        self.ax2.clear()
+        self.ax3.clear()
+
+        self.ax1.plot(self.ctrl.get_freq(), self.ctrl.get_amplitude())
+        self.ax1.set_title("Amplitude")
+        self.ax1.set_xlabel("Frequência")
+        self.ax1.set_ylabel("dB")
+
+        self.ax2.plot(self.ctrl.get_freq(), self.ctrl.get_fase())
+        self.ax2.set_title("Fase")
+        self.ax2.set_xlabel("Frequência")
+        self.ax2.set_ylabel("radiano")
+
+        self.real,self.tempo = self.ctrl.get_Fourier()       
+        self.ax3.plot(self.tempo, self.real)
+        self.ax3.set_title("Transformada inversa de Fourier")
+        self.ax3.set_xlabel("Tempo")
+        self.ax3.set_ylabel("Aplitude")
+
+        self.fig.tight_layout()
+
+        if not self.ctrl.df.empty:
+            self.canvas.draw()
+

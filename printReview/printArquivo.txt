@@ -1,0 +1,7 @@
+{'3.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\3.s2p',
+'4.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\4.s2p',
+'5.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\5.s2p',
+'6.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\6.s2p',
+'9.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\9.s2p',
+'bolinha_p1_idx07_angCW50.4000.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\bolinha_p1_idx07_angCW50.4000.s2p',
+'phantom_bowl_idx08_angCW57.6000.s2p': 'C:\\Users\\Pedro Batista\\OneDrive\\Área de Trabalho\\SinaisIFFT - Copia\\SinaisExemplos\\phantom_bowl_idx08_angCW57.6000.s2p'}
