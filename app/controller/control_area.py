@@ -2,8 +2,7 @@ from pathlib import Path
 import pandas as pd 
 from io import StringIO
 import numpy as np
-import scipy as sp
-from scipy.fft import ifftshift, ifft
+from scipy.fft import ifft
 
 import matplotlib.pyplot as plt
 
@@ -11,26 +10,14 @@ import matplotlib.pyplot as plt
 class ArquivoController:
 
 
-    def __init__(self): 
+    def __init__(self, nomeArquivo, caminho): 
 
-        self.arquivos = {}
         self.df = pd.DataFrame()
+        self.caminho = caminho 
+        self.nomeArquivo = nomeArquivo
         
-    def manejaArquivo(self, caminho):   
-
-        pasta = Path(caminho)
-
-        self.arquivos = {
-            p.name: str(p)
-            for p in pasta.glob("*.s2p")
-        }
-
-        #print(f'Dicionário - arquivos: {self.arquivos}')
-        return list(self.arquivos.keys())
-    
-    def pegarData(self, nomeArquivo): 
-        self.caminhoPlot  = self.arquivos[nomeArquivo]
-        with open(self.caminhoPlot, 'r') as arquivo:
+    def pegarData(self): 
+        with open(self.caminho, 'r') as arquivo:
 
             linhas = [
             linha for linha in arquivo
@@ -42,72 +29,34 @@ class ArquivoController:
         self.df.columns = ["frequencia", "modulo", "fase"]
 
         #Funções para desenvolvimento da transformada de fourier
-    def get_Fourier(self):     
-                freq, amplitude, fase = self.VetorNumPy(
-                    self.get_freq(), self.get_amplitude(), self.get_fase())
-                
-                espectroComplex = self.espectroComplexo(amplitude, fase) #espectro complexo, criando A*e^jw
-        
-                resulIFFT = ifft(espectroComplex) * 2 * len(espectroComplex)
-        
-                self.real = np.real(resulIFFT) 
-                self.nAmostras  = len(resulIFFT)         
-                self.tempo= self.EixoTempo(freq, self.nAmostras)
-        
-                return self.real, self.tempo 
 
     def get_freq(self):
-        return self.df["frequencia"] 
-     
+        return np.array (self.df["frequencia"], dtype='float') 
+    
     def get_amplitude(self):
         
-        return 10**(self.df["modulo"] /20)  #transforma amplitude de db para escala linear, é tensão portanto "/20"
+        return np.array(10**(self.df["modulo"] /20), dtype='float' ) #transforma amplitude de db para escala linear, é tensão portanto "/20"
     
     def get_fase(self):
         
-        return np.deg2rad(self.df["fase"]) #fase em radianos.
+        return np.array(np.deg2rad(self.df["fase"]), dtype='float') #fase em radianos.
 
-    def VetorNumPy (self, freq, amplitude, fase):
-        self.npfreq = np.array( freq, dtype='float')
-        self.npamplitude = np.array( amplitude, dtype='float')
-        self.npfase = np.array( fase, dtype='float')
-
-        return self.npfreq, self.npamplitude, self.npfase 
-
-    def espectroComplexo(self, amplitude, fase): 
-         #espectro complexo, criando A*e^jw
-            self.espectroComplex = amplitude*np.exp(1j*fase) 
-            return self.espectroComplex
-
-    def EixoTempo (self, freq, nAmostras): 
-        #eixo temporal        
-        # espaço entre frequencias, por serem igualmente espeaçadas será um valore constante 
-                self.difFreq = freq[1] - freq[0]
-                self.dt = 1/(nAmostras*self.difFreq)  
-                self.tempo = np.arange(nAmostras)*self.dt
-
-                return self.tempo
-    
     def PlotPopUp (self):
          
-        real, tempo = self.get_Fourier()
-        freq = self.npfreq
-        amplitude = self.npamplitude
-        fase = self.npfase
-   
+        real, tempo = self.get_Fourier()   
 
         # Cria uma janela com 3 gráficos
         fig, axs = plt.subplots(3, 1, figsize=(10, 8))
 
         # Primeiro gráfico
-        axs[0].plot(freq, amplitude)
+        axs[0].plot(self.freq, self.amplitude)
         axs[0].set_title("Amplitude x Freq", loc = 'left', pad=8)
         axs[0].set_xlabel("frequência")
         axs[0].set_ylabel("Amplitude")
         axs[0].grid(True)
 
         # Segundo gráfico
-        axs[1].plot(freq, fase)
+        axs[1].plot(self.freq, self.fase)
         axs[1].set_title("fase X Freq",loc = 'left', pad=8)
         axs[1].set_xlabel("frequancia")
         axs[1].set_ylabel("fase")
@@ -131,6 +80,33 @@ class ArquivoController:
             self.pegarData(atual) 
             self.PlotPopUp()
             self.df = self.df.iloc[0:0]        
-          
 
-   
+                  
+    def get_Fourier(self):     
+        self.freq = self.get_freq()
+        self.amplitude = self.get_amplitude()
+        self.fase = self.get_fase()
+        espectroComplex = self.espectroComplexo(self.amplitude,self.fase) #espectro complexo, criando A*e^jw
+            
+        resulIFFT = ifft(espectroComplex) * 2 * len(espectroComplex)
+            
+        real = np.real(resulIFFT) 
+        nAmostras  = len(resulIFFT)         
+        tempo = self.EixoTempo(self.freq, nAmostras)
+            
+        return real, tempo 
+    
+    def espectroComplexo(self, amplitude, fase): 
+         #espectro complexo, criando A*e^jw
+            espectroComplex = amplitude*np.exp(1j*fase) 
+            return espectroComplex
+
+    def EixoTempo (self, freq, nAmostras): 
+        #eixo temporal        
+        # espaço entre frequencias, por serem igualmente espeaçadas será um valore constante 
+                difFreq = freq[1] - freq[0]
+                dt = 1/(nAmostras*difFreq)  
+                tempo = np.arange(nAmostras)*dt
+
+                return tempo
+    

@@ -46,6 +46,6 @@ class App(tk.Tk):
             background=[("active", "#007acc")],
             foreground=[("active", "#ffffff")]
         )
-        self.ctrl = ArquivoController()
-        self.menu = Menu(self, self.ctrl)
-        self.principal = Principal(self, self.ctrl)
+        
+        self.menu = Menu(self)
+        self.principal = Principal(self)
