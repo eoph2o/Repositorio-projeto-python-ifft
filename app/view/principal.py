@@ -5,7 +5,7 @@ from matplotlib.figure import Figure
 
 class Principal(ttk.Frame):
 
-    def __init__(self, parent, ):
+    def __init__(self, parent):
         super().__init__(parent)
 
         self.place(relx=0.18, y=0, relwidth=0.82, relheight=1)

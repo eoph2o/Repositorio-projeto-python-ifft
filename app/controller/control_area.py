@@ -7,7 +7,7 @@ from scipy.fft import ifft
 import matplotlib.pyplot as plt
 
 
-class ArquivoController:
+class Class_ArquivoController:
 
 
     def __init__(self, nomeArquivo, caminho): 
@@ -15,7 +15,7 @@ class ArquivoController:
         self.df = pd.DataFrame()
         self.caminho = caminho 
         self.nomeArquivo = nomeArquivo
-        
+        self.flagAberto = 0
     def pegarData(self): 
         with open(self.caminho, 'r') as arquivo:
 
@@ -42,38 +42,39 @@ class ArquivoController:
         return np.array(np.deg2rad(self.df["fase"]), dtype='float') #fase em radianos.
 
     def PlotPopUp (self):
-         
-        real, tempo = self.get_Fourier()   
+            real, tempo = self.get_Fourier()   
+            # Cria uma janela com 3 gráficos
+            fig, axs = plt.subplots(3, 1, figsize=(10, 8))
+            
+            # Primeiro gráfico
+            axs[0].plot(self.freq, self.amplitude)
+            axs[0].set_title("Magnitude x Freq", loc = 'left', pad=8)
+            axs[0].set_xlabel("frequência")
+            axs[0].set_ylabel("Magnitude")
+            axs[0].grid(True)
 
-        # Cria uma janela com 3 gráficos
-        fig, axs = plt.subplots(3, 1, figsize=(10, 8))
+            # Segundo gráfico
+            axs[1].plot(self.freq, self.fase)
+            axs[1].set_title("fase X Freq",loc = 'left', pad=8)
+            axs[1].set_xlabel("frequancia")
+            axs[1].set_ylabel("fase")
+            axs[1].grid(True)
 
-        # Primeiro gráfico
-        axs[0].plot(self.freq, self.amplitude)
-        axs[0].set_title("Amplitude x Freq", loc = 'left', pad=8)
-        axs[0].set_xlabel("frequência")
-        axs[0].set_ylabel("Amplitude")
-        axs[0].grid(True)
+            # Terceiro gráfico
+            axs[2].plot(tempo, real)
+            axs[2].set_title("IFFT",loc = 'left', pad=8)
+            axs[2].set_xlabel("Tempo")
+            axs[2].set_ylabel("Real")
+            axs[2].grid(True)
 
-        # Segundo gráfico
-        axs[1].plot(self.freq, self.fase)
-        axs[1].set_title("fase X Freq",loc = 'left', pad=8)
-        axs[1].set_xlabel("frequancia")
-        axs[1].set_ylabel("fase")
-        axs[1].grid(True)
+            # Ajusta automaticamente os espaços
+            plt.tight_layout()
 
-        # Terceiro gráfico
-        axs[2].plot(tempo, real)
-        axs[2].set_title("IFFT",loc = 'left', pad=8)
-        axs[2].set_xlabel("Tempo")
-        axs[2].set_ylabel("Real")
-        axs[2].grid(True)
+            # Mostra a janela
+            #"block = False", não bloqueia a abertura de outros grafícos, todos aparecem de uma só vez, um em seguida do outro
+            plt.show(block=False)
+            
 
-        # Ajusta automaticamente os espaços
-        plt.tight_layout()
-
-        # Mostra a janela
-        plt.show()
 
     def leituraAll(self): 
         for atual in self.arquivos:
@@ -109,4 +110,4 @@ class ArquivoController:
                 tempo = np.arange(nAmostras)*dt
 
                 return tempo
-    
+ 

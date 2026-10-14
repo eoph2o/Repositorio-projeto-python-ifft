@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from app.controller.control_area import ArquivoController
+from app.controller.control_area import Class_ArquivoController
 from tkinter import filedialog as fd
 from tkinter import messagebox
 from io import StringIO
@@ -29,7 +29,7 @@ class Menu(ttk.Frame):
 
         btnAbriAq = ttk.Button( self.container, text="Abrir Pasta", style="Menu.TButton", command=self.abrir_pasta )
         btnAbriAq.pack(pady=5, fill="x")
-        btnLeTudo = ttk.Button( self.container, text="Ler Todos", style="Menu.TButton", command=self.leCalcula)
+        btnLeTudo = ttk.Button( self.container, text="Ler Todos (loop for)", style="Menu.TButton", command=self.leCalcula)
         btnLeTudo.pack(pady=5, fill="x")
 
 
@@ -39,6 +39,7 @@ class Menu(ttk.Frame):
 
         # evento de clique
         self.tree.bind("<<TreeviewSelect>>", self.on_select)
+
 
 
     #procurar uma determinada pasta para efetuar a leitura 
@@ -68,10 +69,14 @@ class Menu(ttk.Frame):
 
         nome_arquivo = self.tree.item(item[0], "text")
 
-        #print(f'nome_arquivo: {nome_arquivo}'
-        self.ctrl.pegarData(nome_arquivo)
-        self.ctrl.get_Fourier()
-        self.master.principal.plotar()
+        caminho = self.arquivos[nome_arquivo]
+        arquivoselcionado = Class_ArquivoController(nome_arquivo, caminho)
+
+        arquivoselcionado.pegarData()
+        arquivoselcionado.PlotPopUp()
+    
+
+        print(arquivoselcionado.flagAberto)
 
     def manejaArquivo(self, caminho):   
         pasta = Path(caminho)
@@ -83,17 +88,23 @@ class Menu(ttk.Frame):
 
         #print(f'Dicionário - arquivos: {self.arquivos}')
         return list(self.arquivos.keys())
-            
+    
+    def criaListObj(self):
+          self.listobj = [
+                    Class_ArquivoController(nome, caminho)
+                    for nome, caminho in self.arquivos.items()
+            ]# intancia o objeto "Class_ArquivoController" lendo o dicicionário de arquivos, 
+            #  enviando nome e caminho do arquivo
+             
     def leCalcula(self):
-        self.listobj = [
-            ArquivoController(nome, caminho)
-            for nome, caminho in self.arquivos.items()
-    ]
+        self.criaListObj()
 
         for obj in self.listobj:
             obj.pegarData()
             obj.PlotPopUp()
-            
+
+
+
 
 
 

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from app.view.menu import Menu
 from app.view.principal import Principal
-from app.controller.control_area import ArquivoController
+from app.controller.control_area import Class_ArquivoController
 
 
 class App(tk.Tk):
