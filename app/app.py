@@ -46,6 +46,6 @@ class App(tk.Tk):
             background=[("active", "#007acc")],
             foreground=[("active", "#ffffff")]
         )
-        
-        self.menu = Menu(self)
-        self.principal = Principal(self)
+
+        self.principal = Principal(self)          
+        self.menu = Menu(self, self.principal)    
